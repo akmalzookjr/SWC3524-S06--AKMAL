@@ -5,8 +5,9 @@ all they need to know. The comments should usually include at least:
 ------------------------------------------------------------------------
 
 PROJECT TITLE:
-PURPOSE OF PROJECT:
-VERSION or DATE:
+PURPOSE OF PROJECT: SWC3524 GROUP PROJECT
+VERSION or DATE: 12/11/2025
 HOW TO START THIS PROJECT:
-AUTHORS:
+AUTHORS: MUHAMMAD AKMAL BIN MARZUKI
 USER INSTRUCTIONS:
+
