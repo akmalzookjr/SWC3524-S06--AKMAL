@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=DivideConquerTSP
+comment1.params=dist\ locations
+comment1.target=java.lang.String\ solve(int[][],\ java.lang.String[])
+comment2.params=dist\ locations
+comment2.target=java.lang.String\ solveSmallInstance(int[][],\ java.lang.String[])
+comment3.params=group\ dist\ locations
+comment3.target=java.lang.String\ solveSubproblem(java.util.List,\ int[][],\ java.lang.String[])
+comment4.params=route1\ route2\ dist\ locations
+comment4.target=java.lang.String\ mergeRoutes(java.lang.String,\ java.lang.String,\ int[][],\ java.lang.String[])
+comment5.params=
+comment5.target=java.lang.String\ getName()
+comment6.params=
+comment6.target=java.lang.String\ getTimeComplexity()
+comment7.params=
+comment7.target=java.lang.String\ getSpaceComplexity()
+numComments=8
