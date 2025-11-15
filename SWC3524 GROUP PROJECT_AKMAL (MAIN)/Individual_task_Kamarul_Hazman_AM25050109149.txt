@@ -1,0 +1,256 @@
+//MinHeapRROP
+
+import java.util.*;
+
+public class MinHeapRROP {
+    static class Delivery implements Comparable<Delivery> {
+        String item;
+        int priority;
+        String destination;
+
+        public Delivery(String item, int priority, String destination) {
+            this.item = item;
+            this.priority = priority;
+            this.destination = destination;
+        }
+
+        @Override
+        public int compareTo(Delivery other) {
+            return Integer.compare(this.priority, other.priority);
+        }
+
+        public String toString() {
+            return item + " (Priority: " + priority + ", Destination: " + destination + ")";
+        }
+    }
+
+    private List<Delivery> heap;
+
+    public MinHeapRROP() {
+        heap = new ArrayList<>();
+    }
+
+    public void insert(String item, int priority, String destination) {
+        heap.add(new Delivery(item, priority, destination));
+        heapifyUp(heap.size() - 1);
+    }
+
+    public Delivery extractMin() {
+        if (heap.isEmpty()) return null;
+        Delivery root = heap.get(0);
+        Delivery last = heap.remove(heap.size() - 1);
+        if (!heap.isEmpty()) {
+            heap.set(0, last);
+            heapifyDown(0);
+        }
+        return root;
+    }
+
+    private void heapifyUp(int i) {
+        while (i > 0 && heap.get(i).priority < heap.get((i - 1) / 2).priority) {
+            Collections.swap(heap, i, (i - 1) / 2);
+            i = (i - 1) / 2;
+        }
+    }
+
+    private void heapifyDown(int i) {
+        int smallest = i;
+        int left = 2 * i + 1, right = 2 * i + 2;
+
+        if (left < heap.size() && heap.get(left).priority < heap.get(smallest).priority)
+            smallest = left;
+        if (right < heap.size() && heap.get(right).priority < heap.get(smallest).priority)
+            smallest = right;
+
+        if (smallest != i) {
+            Collections.swap(heap, i, smallest);
+            heapifyDown(smallest);
+        }
+    }
+
+    public static void main(String[] args) {
+        MinHeapRROP minHeap = new MinHeapRROP();
+        minHeap.insert("Medical Kits", 1, "Flood Zone A");
+        minHeap.insert("Food Supply", 2, "Camp B");
+        minHeap.insert("Water Filters", 3, "Relief Center C");
+
+        System.out.println("Processing deliveries by urgency:");
+        while (true) {
+            Delivery d = minHeap.extractMin();
+            if (d == null) break;
+            System.out.println("Dispatching: " + d);
+        }
+    }
+}
+
+
+//MaxHeapRROP
+
+import java.util.*;
+
+public class MaxHeapRROP {
+    static class InventoryItem implements Comparable<InventoryItem> {
+        String name;
+        int value;
+        int quantity;
+
+        public InventoryItem(String name, int value, int quantity) {
+            this.name = name;
+            this.value = value;
+            this.quantity = quantity;
+        }
+
+        @Override
+        public int compareTo(InventoryItem other) {
+            return Integer.compare(other.value, this.value);
+        }
+
+        public String toString() {
+            return name + " (Value: " + value + ", Qty: " + quantity + ")";
+        }
+    }
+
+    private List<InventoryItem> heap = new ArrayList<>();
+
+    public void insert(String name, int value, int quantity) {
+        heap.add(new InventoryItem(name, value, quantity));
+        heapifyUp(heap.size() - 1);
+    }
+
+    public InventoryItem extractMax() {
+        if (heap.isEmpty()) return null;
+        InventoryItem root = heap.get(0);
+        InventoryItem last = heap.remove(heap.size() - 1);
+        if (!heap.isEmpty()) {
+            heap.set(0, last);
+            heapifyDown(0);
+        }
+        return root;
+    }
+
+    private void heapifyUp(int i) {
+        while (i > 0 && heap.get(i).value > heap.get((i - 1) / 2).value) {
+            Collections.swap(heap, i, (i - 1) / 2);
+            i = (i - 1) / 2;
+        }
+    }
+
+    private void heapifyDown(int i) {
+        int largest = i;
+        int left = 2 * i + 1, right = 2 * i + 2;
+
+        if (left < heap.size() && heap.get(left).value > heap.get(largest).value)
+            largest = left;
+        if (right < heap.size() && heap.get(right).value > heap.get(largest).value)
+            largest = right;
+
+        if (largest != i) {
+            Collections.swap(heap, i, largest);
+            heapifyDown(largest);
+        }
+    }
+
+    public static void main(String[] args) {
+        MaxHeapRROP maxHeap = new MaxHeapRROP();
+        maxHeap.insert("Satellite Phone", 95, 5);
+        maxHeap.insert("Portable Generator", 85, 10);
+        maxHeap.insert("Medical Equipment", 90, 15);
+
+        System.out.println("Top Priority Item: " + maxHeap.extractMax());
+    }
+}
+
+//Splay Tree RROP
+
+public class SplayTreeRROP {
+    static class Node {
+        String item;
+        int accessCount;
+        Node left, right;
+
+        Node(String item) {
+            this.item = item;
+            this.accessCount = 0;
+        }
+    }
+
+    private Node root;
+
+    private Node rightRotate(Node x) {
+        Node y = x.left;
+        x.left = y.right;
+        y.right = x;
+        return y;
+    }
+
+    private Node leftRotate(Node x) {
+        Node y = x.right;
+        x.right = y.left;
+        y.left = x;
+        return y;
+    }
+
+    private Node splay(Node root, String item) {
+        if (root == null || root.item.equals(item)) return root;
+        if (item.compareTo(root.item) < 0) {
+            if (root.left == null) return root;
+            if (item.compareTo(root.left.item) < 0)
+                root.left.left = splay(root.left.left, item);
+            else if (item.compareTo(root.left.item) > 0)
+                root.left.right = splay(root.left.right, item);
+            return rightRotate(root);
+        } else {
+            if (root.right == null) return root;
+            if (item.compareTo(root.right.item) > 0)
+                root.right.right = splay(root.right.right, item);
+            else if (item.compareTo(root.right.item) < 0)
+                root.right.left = splay(root.right.left, item);
+            return leftRotate(root);
+        }
+    }
+
+    public void insert(String item) {
+        if (root == null) {
+            root = new Node(item);
+            return;
+        }
+        root = splay(root, item);
+        if (item.equals(root.item)) return;
+        Node newNode = new Node(item);
+        if (item.compareTo(root.item) < 0) {
+            newNode.right = root;
+            root.left = null;
+        } else {
+            newNode.left = root;
+            root.right = null;
+        }
+        root = newNode;
+    }
+
+    public boolean search(String item) {
+        root = splay(root, item);
+        if (root != null && root.item.equals(item)) {
+            root.accessCount++;
+            return true;
+        }
+        return false;
+    }
+
+    public void showTree() {
+        System.out.println("Splay Tree Root: " + (root != null ? root.item : "None"));
+    }
+
+    public static void main(String[] args) {
+        SplayTreeRROP tree = new SplayTreeRROP();
+        tree.insert("Antibiotics");
+        tree.insert("Tents");
+        tree.insert("Painkillers");
+        tree.insert("Water Purifiers");
+
+        tree.search("Antibiotics");
+        tree.search("Painkillers");
+        tree.search("Antibiotics");
+
+        tree.showTree();
+    }
+}
